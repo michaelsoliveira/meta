@@ -1,0 +1,4 @@
+IO_PROJECT=meta
+IO_APP=backend
+IO_STAGE=dev
+IO_VERSION=1

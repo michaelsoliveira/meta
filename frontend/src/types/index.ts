@@ -42,6 +42,11 @@ export interface MunicipioType {
   estado: EstadoType;
 }
 
+export interface ClienteType {
+  id: string
+  pessoa: PessoaType
+}
+
 export interface PessoaType {
   id?: string;
   tipo?: "F" | "J";

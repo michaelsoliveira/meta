@@ -47,8 +47,8 @@ model Pessoa {
     tipo        TipoPessoa  @default(F)
     id_endereco String? @db.Uuid
     endereco    Endereco? @relation(fields: [id_endereco], references: [id])
-    pessoa_fisica   PessoaFisica?
-    pessoa_juridica   PessoaJuridica?
+    fisica   PessoaFisica?
+    juridica   PessoaJuridica?
     id_user   String? @db.Uuid
     user      User? @relation(fields: [id_user], references: [id])
     cliente     Cliente[]

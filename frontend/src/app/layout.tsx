@@ -1,9 +1,11 @@
+import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { auth } from "@/lib/auth";
 import Providers from "@/components/layout/providers";
 import Layout from "@/components/layout";
+import { AuthProvider } from "@/context/auth-context";
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -27,11 +29,15 @@ export default async function RootLayout({
       className={`${inter.className}`}  
     >
       <body className="bg-white text-gray-900">
-        <Providers session={session}>
-          <Layout>
-            <main className="min-h-[500px]">{children}</main>
-          </Layout>
-        </Providers>
+        <NuqsAdapter>
+          <Providers session={session}>
+            <AuthProvider>
+              <Layout>
+                  <main className="min-h-[500px]">{children}</main>
+              </Layout>
+            </AuthProvider>
+          </Providers>
+        </NuqsAdapter>
       </body>
     </html>
   );

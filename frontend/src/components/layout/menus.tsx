@@ -24,54 +24,11 @@ import { DocumentTextIcon } from '@heroicons/react/24/solid'
 
 export const resources = [
     {
-        name: 'UMF',
-        description: 'Unidade de Manejo Florestal',
-        href: '/umf',
+        name: 'Cliente',
+        description: 'Cadastro de Cliente',
+        href: '/dashboard/cliente',
         icon: ClipboardDocumentIcon,
     },
-    {
-        name: 'UPA',
-        description: 'Unidade de Produção Anual',
-        href: '/upa',
-        icon: BookmarkIcon,
-    },
-    {
-        name: 'Equação de Volume',
-        description: 'Equações de Volumes',
-        href: '/equacao',
-        icon: CalculatorIcon,
-    },
-    {
-        name: 'UT',
-        description: 'Unidade de Trabalho',
-        href: '/ut',
-        icon: CalendarIcon,
-    },
-    {
-        name: 'Observações',
-        description: 'Observações Padronizadas',
-        href: '/obs-arvore',
-        faIcon: true,
-        icon: DocumentTextIcon,
-    },
-    {
-        name: 'Especies',
-        description: 'Espécies Existentes',
-        href: '/especie',
-        icon: PencilIcon,
-    },
-    {
-        name: 'Categoria de Espécies',
-        description: 'Critérios de seleção',
-        href: '/categoria-especie',
-        icon: RectangleGroupIcon,
-    },
-    {
-        name: 'Grupo Categoria de Espécies',
-        description: 'Relaciona Categoria -> Espécie',
-        href: '/categoria-especie/grupo',
-        icon: CogIcon,
-    }
 
 ]
 

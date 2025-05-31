@@ -2,40 +2,47 @@ import { PrismaClient, TipoPessoa } from "@prisma/client";
 const prismaClient = new PrismaClient();
 
 type ClienteType = {
-    pessoa: {
-        tipo: string;
-        pessoa_juridica: {
-            razao_social: string;
-            nome_fantasia: string;
-            cnpj: string;
-            data_constituicao: Date;
-        }
-        pessoa_fisica: {
-            nome: string;
-            rg: string;
-            data_nascimento: Date;
-        },
-        endereco: {
-            logradouro: string;
-            bairro: string;
-        }
+    tipo: string;
+    juridica: {
+        razao_social: string;
+        nome_fantasia: string;
+        cnpj: string;
+        data_constituicao: Date;
+    }
+    fisica: {
+        nome: string;
+        rg: string;
+        data_nascimento: Date;
+    },
+    endereco: {
+        logradouro: string;
+        bairro: string;
     }
 }
 
 class ClienteService {
   async findAll() {
-    return await prismaClient.cliente.findMany({
-        include: {
-            pessoa: {
-                include: {
-                    endereco: true,
-                    pessoa_fisica: true,
-                    pessoa_juridica: true,
-                    user: true,
-                },
-            }
-        }
-    });
+    
+    const [data, total] = await prismaClient.$transaction([
+        prismaClient.cliente.findMany({
+          include: {
+              pessoa: {
+                  include: {
+                      endereco: true,
+                      fisica: true,
+                      juridica: true,
+                      user: true,
+                  },
+              }
+          }
+      }),
+      prismaClient.cliente.count()
+    ]);
+
+    return {
+      data,
+      total
+    }
   }
 
   async findById(id: string) {
@@ -45,8 +52,8 @@ class ClienteService {
             pessoa: {
                 include: {
                     endereco: true,
-                    pessoa_fisica: true,
-                    pessoa_juridica: true,
+                    fisica: true,
+                    juridica: true,
                     user: true,
                 },
             }
@@ -55,30 +62,29 @@ class ClienteService {
   }
 
   async create(data: ClienteType) {
-    const { pessoa } = data
     return await prismaClient.cliente.create({
       data: {
         pessoa: {
             create: {
-                tipo: pessoa.tipo as TipoPessoa,
-                endereco: pessoa.endereco
+                tipo: data.tipo as TipoPessoa,
+                endereco: data.endereco
                 ? {
-                    create: pessoa.endereco,
+                    create: data.endereco,
                     }
                 : undefined,
-                pessoa_fisica:
-                pessoa.tipo === "F" && pessoa.pessoa_fisica
+                fisica:
+                data.tipo === "F" && data.fisica
                     ? {
                         create: {
-                            ...pessoa.pessoa_fisica,
-                            data_nascimento: new Date(pessoa.pessoa_fisica.data_nascimento)
+                            ...data.fisica,
+                            data_nascimento: new Date(data.fisica.data_nascimento)
                         },
                     }
                     : undefined,
-                pessoa_juridica:
-                pessoa.tipo === "J" && pessoa.pessoa_juridica
+                juridica:
+                data.tipo === "J" && data.juridica
                     ? {
-                        create: pessoa.pessoa_juridica,
+                        create: data.juridica,
                     }
                     : undefined,
             }
@@ -88,8 +94,8 @@ class ClienteService {
         pessoa: {
             include: {
                 endereco: true,
-                pessoa_fisica: true,
-                pessoa_juridica: true,
+                fisica: true,
+                juridica: true,
             },
         }
       }
@@ -99,8 +105,6 @@ class ClienteService {
   async update(id: string, data: any) {
     const {
       endereco,
-      pessoa_fisica,
-      pessoa_juridica,
       ...pessoaData
     } = data;
 
@@ -115,15 +119,23 @@ class ClienteService {
                     update: endereco,
                     }
                 : undefined,
-                pessoa_fisica: pessoa_fisica
+                fisica: data?.tipo === "F"
                 ? {
-                    update: pessoa_fisica,
-                    }
+                    update: {
+                      nome: data?.nome,
+                      cpf: data?.cpf,
+                      rg: data?.rg
+                    },
+                  }
                 : undefined,
-                pessoa_juridica: pessoa_juridica
+                juridica: data?.tipo === "J"
                 ? {
-                    update: pessoa_juridica,
-                    }
+                    update: {
+                      cnpj: data?.cnpj,
+                      nome_fantasia: data?.nomeFantasia,
+                      razao_social: data?.razaoSocial
+                    },
+                  }
                 : undefined,
             }
         }
@@ -132,8 +144,8 @@ class ClienteService {
         pessoa: {
             include: {
                 endereco: true,
-                pessoa_fisica: true,
-                pessoa_juridica: true,
+                fisica: true,
+                juridica: true,
             }
         }
       },
